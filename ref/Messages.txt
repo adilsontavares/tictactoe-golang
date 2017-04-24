@@ -1,0 +1,20 @@
+###### SERVER TO CLIENT ######
+
+# GAME STARTED
+- Initial player
+
+# GAME FINISHED
+- Winner
+
+# REQUEST PLAY (Empty)
+
+# TURN PLAYED
+- Player
+- Line 
+- Column
+
+###### CLIENT TO SERVER ######
+
+# PLAY
+- Line
+- Column

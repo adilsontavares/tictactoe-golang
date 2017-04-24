@@ -102,7 +102,8 @@ func (game *Game) drawHUD() {
 }
 
 func (game *Game) update() {
-	// UPDATE
+	
+	
 }
 
 func (game *Game) postUpdate() {
