@@ -3,11 +3,14 @@ That's a Tic Tac Toe network-based game, developed in GoLang. User can play agai
 
 ## Screenshots
 
-### Client
-![Client](https://raw.github.com/adilsontavares/tictactoe-golang/master/img/client.png)
+[server-img]: img/server.png
+[client-img]: img/client.png
 
-### Server
-![Server](https://raw.github.com/adilsontavares/tictactoe-golang/master/img/server.png)
+| Client                | Server                |
+|-----------------------|-----------------------|
+| ![Client][client-img] | ![Server][server-img] |
+| User paying against computer over the internet. | Server managing many clients. |
+
 
 ## Development
 Both, server and client, were coded in Go.
