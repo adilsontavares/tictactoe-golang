@@ -4,6 +4,7 @@ import (
 	"github.com/nsf/termbox-go"
 	"../console"
 	"../cursor"
+	"log"
 )
 
 var (
@@ -16,8 +17,6 @@ type Board struct {
 
 	items [3][3]int
 
-	Cursor *cursor.Cursor
-	
 	DivisionsFgColor termbox.Attribute
 	PlayersFgColor termbox.Attribute
 	BorderFgColor termbox.Attribute
@@ -30,16 +29,7 @@ type Board struct {
 func New() *Board {
 	
 	board := Board{}
-	board.items[0][0] = ItemX
-	board.items[1][1] = ItemX
-	board.items[2][2] = ItemX
-	board.items[0][1] = ItemO
-	board.items[0][2] = ItemO
-	board.items[2][0] = ItemX
-	board.items[2][1] = ItemO
-	board.items[1][2] = ItemX
-
-	board.Cursor = cursor.New()
+	board.Reset()
 
 	board.DivisionsFgColor = termbox.ColorDefault
 	board.PlayersFgColor = termbox.ColorDefault
@@ -52,9 +42,49 @@ func New() *Board {
 	return &board
 }
 
-func characterForItem(item int) rune {
+func (board *Board) Log() {
 
-	return 'X'
+	log.Println("Board status:")
+
+	for i := 0; i < 3; i++ {
+		for j := 0; j < 3; j++ {
+			log.Printf("%v", board.items[i][j])
+		}
+		log.Println()
+	}
+}
+
+func (board *Board) GetItems() [3][3]int {
+	return board.items
+}
+
+func (board *Board) GetFreePos() (lin int, col int) {
+
+	for i := 0; i < 3; i++ {
+		for j := 0; j < 3; j++ {
+			if !board.HasItemAt(i, j) {
+				return i, j
+			}
+		}
+	}
+
+	return -1, -1
+}
+
+func OppositeItem(item int) int {
+	
+	if item == ItemX {
+		return ItemO
+	}
+
+	if item == ItemO {
+		return ItemX
+	}
+
+	return item
+}
+
+func CharacterForItem(item int) rune {
 
 	switch item {
 	case ItemNone:
@@ -68,6 +98,39 @@ func characterForItem(item int) rune {
 	}
 
 	return '?'
+}
+
+func (board *Board) IsPositionValid(line int, column int) bool {
+	return line >= 0 && column >= 0 && line < 3 && column < 3
+}
+
+func (board *Board) HasItemAt(line int, column int) bool {
+
+	if !board.IsPositionValid(line, column) {
+		return false
+	}
+
+	return board.items[line][column] != ItemNone
+}
+
+func (board *Board) Place(item int, line int, column int) bool {
+
+	if !board.IsPositionValid(line, column) || board.HasItemAt(line, column) {
+		return false
+	}
+
+	board.items[line][column] = item
+
+	return true
+}
+
+func (board *Board) Reset() {
+
+	for i := 0; i < 3; i++ {
+		for j := 0; j < 3; j++ {
+			board.items[i][j] = ItemNone
+		}
+	}
 }
 
 func (board *Board) drawBorder(x int, y int) {
@@ -153,9 +216,9 @@ func (board *Board) drawPlayers(x int, y int) {
 		for j := 0; j < 3; j++ {
 
 			dx := -4 + j * 4
-			dy := 2 + i * -2
+			dy := -2 + i * 2
 
-			termbox.SetCell(x + dx, y + dy, characterForItem(board.items[i][j]), fg, bg)
+			termbox.SetCell(x + dx, y + dy, CharacterForItem(board.items[i][j]), fg, bg)
 		}
 	}
 }
@@ -168,7 +231,7 @@ func (board *Board) drawCursor(x int, y int, cursor *cursor.Cursor) {
 	sw, _ := termbox.Size()
 
 	bx := x - 4 + cursor.X * 4
-	by := y + 2 + cursor.Y * -2
+	by := y - 2 + cursor.Y * 2
 
 	for j := -1; j <= 1; j++ {
 		for i := -2; i <= 2; i++ {

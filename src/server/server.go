@@ -63,8 +63,8 @@ func handleClient(conn net.Conn) {
 
 	go func() {
 
-		for !client.Closed() {
-			client.HandleMessage()
+		for !client.Socket.IsClosed() {
+			client.Socket.ReadMessage()
 		}
 
 		for i, c := range clients {

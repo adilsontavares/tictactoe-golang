@@ -1,47 +1,46 @@
 package server
 
 import (
-	"bufio"
 	"net"
+	"../board"
+	"../sockets"
 )
 
 type Client struct {
 
-	closed bool
+	waitingPlay bool
+	currentItem int
 
-	Conn net.Conn
+	Item int
+
+	Socket *sockets.Socket
+	Board *board.Board
 }
 
-func (client *Client) HandleMessage() {
-
-	if client.closed {
-		return
-	}
-
-	message, err := bufio.NewReader(client.Conn).ReadString('\n')
-
-	if err != nil {
-
-		client.closed = true
-		return
-	}
-
-	client.handleMessage(message)
+func (client *Client) log(message string, format ...interface{}) {
+	client.Socket.Log(message, format...)
 }
 
-func (client *Client) handleMessage(message string) {
+func (client *Client) Reset() {
 
+	client.waitingPlay = false
+	client.Board.Reset()
+}
 
+func (client *Client) sendMessage(data interface{}) bool {
+	return client.Socket.SendMessage(data)
 }
 
 func NewClient(conn net.Conn) (*Client) {
 
 	client := Client{}
-	client.Conn = conn
+	client.Item = board.ItemX
+	client.Board = board.New()
+	client.Socket = sockets.New(conn)
+	client.Socket.ActorName = "Client"
+	client.Socket.InterpretClosure = client.interpretMessage
+
+	client.startNewGame()
 
 	return &client
-}
-
-func (client *Client) Closed() bool {
-	return client.closed
 }

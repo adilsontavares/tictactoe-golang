@@ -2,6 +2,7 @@ package console
 
 import (
 	"github.com/nsf/termbox-go"
+	"fmt"
 )
 
 func Begin() {
@@ -20,6 +21,12 @@ func PrintColor(x int, y int, s string, fg termbox.Attribute, bg termbox.Attribu
 	}
 }
 
+func Printf(x int, y int, format string, a ...interface{}) {
+
+	str := fmt.Sprintf(format, a...)
+	Print(x, y, str)
+}
+
 func Print(x int, y int, s string) {
 	PrintColor(x, y, s, termbox.ColorDefault, termbox.ColorDefault)
 }
@@ -29,5 +36,6 @@ func PrintCenter(x int, y int, s string) {
 }
 
 func End() {
+
 	termbox.Close()
 }
