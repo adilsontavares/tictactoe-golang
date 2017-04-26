@@ -5,11 +5,11 @@ import (
 	"../board"
 )
 
-func (game *Game) RequestNewGame() {
+func (game *Game) requestNewGame() {
 	game.Socket.SendMessageId(102)
 }
 
-func (game *Game) Play() {
+func (game *Game) sendPlay() {
 
 	lin := game.Cursor.Y
 	col := game.Cursor.X

@@ -2,6 +2,10 @@ package client
 
 func (game *Game) moveCursor(offx int, offy int) {
 
+	if game.state != StateWaitingPlay {
+		return
+	}
+
 	cursor := game.Cursor
 
 	cursor.X += offx

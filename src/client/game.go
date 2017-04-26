@@ -36,7 +36,7 @@ type Game struct {
 func (game *Game) Loop() {
 
 	eventQueue := make(chan termbox.Event)
-	loopTick := time.NewTicker(100 * time.Millisecond)
+	loopTick := time.NewTicker(40 * time.Millisecond)
 
 	go func() {
 		for {
@@ -124,6 +124,18 @@ func (game *Game) WantsDisplay() {
 	termbox.Interrupt()
 }
 
+func (game *Game) Quit() {
+	game.WantsFinish = true
+}
+
+func (game *Game) StartNew() {
+	game.requestNewGame()
+}
+
+func (game *Game) Play() {
+	game.sendPlay()
+}
+
 func NewGame() *Game {
 	
 	game := Game{}
@@ -138,10 +150,16 @@ func (game *Game) handleEvent(evt termbox.Event) {
 
 	switch evt.Type {
 	case termbox.EventKey:
-		switch evt.Key {
-		case termbox.KeyEsc:
-			game.WantsFinish = true
 
+		switch evt.Ch {
+		case 'q', 'Q':
+			game.Quit()
+
+		case 'n', 'N':
+			game.StartNew()
+		}
+
+		switch evt.Key {
 		case termbox.KeyArrowDown:
 			game.moveCursorDown()
 
@@ -154,14 +172,11 @@ func (game *Game) handleEvent(evt termbox.Event) {
 		case termbox.KeyArrowLeft:
 			game.moveCursorLeft()
 
-		case termbox.KeyCtrlN:
-			game.RequestNewGame()
-
 		case termbox.KeyEnter:
 			if game.state == StateWaitingPlay {
 				game.Play()
 			} else if game.state == StateFinished {
-				game.RequestNewGame()
+				game.StartNew()
 			}
 		}
 	}
