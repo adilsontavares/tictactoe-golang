@@ -3,8 +3,12 @@ That's a Tic Tac Toe network-based game, developed in GoLang. User can play agai
 
 ## Screenshots
 
+[demo-img]: img/demo.gif
+
 [server-img]: img/server.png
 [client-img]: img/client.png
+
+![Demo][demo-img]
 
 | Client                | Server                |
 |-----------------------|-----------------------|
