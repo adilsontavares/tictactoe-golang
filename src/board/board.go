@@ -4,6 +4,7 @@ import (
 	"github.com/nsf/termbox-go"
 	"../console"
 	"../cursor"
+	"../helpers"
 	"log"
 	"math/rand"
 )
@@ -216,9 +217,22 @@ func (board *Board) drawPlayers(x int, y int) {
 	fg := board.PlayersFgColor
 	bg := board.PlayersBgColor
 
+	indexes := board.FindWinnerIndexes()
+
 	for i := 0; i < 3; i++ {
 
 		for j := 0; j < 3; j++ {
+
+			bg = board.PlayersBgColor
+
+			if indexes != nil {
+				
+				index := i * 3 + j
+
+				if helpers.Contains(indexes, index) {
+					bg |= termbox.AttrBold
+				}
+			}
 
 			dx := -4 + j * 4
 			dy := -2 + i * 2

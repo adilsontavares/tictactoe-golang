@@ -46,7 +46,7 @@ func (game *Game) gameFinished(data map[string]interface{}) bool {
 	game.PlayerScore = pscore
 	game.ComputerScore = cscore
 
-	game.ShowAlert(message)
+	game.ShowMessage(message)
 	log.Printf("%v\n", message)
 
 	game.state = StateFinished
