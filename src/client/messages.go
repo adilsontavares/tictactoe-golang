@@ -30,12 +30,12 @@ func (game *Game) gameFinished(data map[string]interface{}) bool {
 	var message string
 	win := int(winner.(float64))
 
-	if win == board.ItemNone {
-		message = "Game over! That's a tie."
-	} else if win == game.PlayerItem {
-		message = "Game over! You won."
+	if win == game.PlayerItem {
+		message = "Game over. You won!"
+	} else if win == board.OppositeItem(game.PlayerItem) {
+		message = "Game over. You lose..."
 	} else {
-		message = "Game over! Computer wins."
+		message = "Game over! That's a tie."
 	}
 
 	game.ShowMessage(message)

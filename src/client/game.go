@@ -5,12 +5,8 @@ import (
 	"../board"
 	"../cursor"
 	"../sockets"
-	"sync"
+	"time"
 	"fmt"
-)
-
-var (
-	mutex sync.Mutex
 )
 
 type Game struct {
@@ -30,16 +26,31 @@ type Game struct {
 
 func (game *Game) Loop() {
 
-	for !game.WantsFinish {
+	eventQueue := make(chan termbox.Event)
+	loopTick := time.NewTicker(100 * time.Millisecond)
 
-		// mutex.Lock()
-		
-		game.update()
-		game.print()
-		game.postUpdate()
-		game.handleInput()
+	go func() {
+		for {
+			eventQueue <- termbox.PollEvent()
+		}
+	}()
 
-		// mutex.Unlock()
+mainLoop:
+	for {
+
+		select {
+		case ev := <- eventQueue:
+			game.handleEvent(ev)
+
+		case <- loopTick.C:
+			game.update()
+			game.print()
+			game.postUpdate()
+
+			if game.WantsFinish {
+				break mainLoop
+			}	
+		}
 	}
 }
 
@@ -48,7 +59,8 @@ func (game *Game) update() {
 }
 
 func (game *Game) postUpdate() {
-	// game.message = ""
+	
+
 }
 
 func (game *Game) Reset() {
@@ -60,6 +72,7 @@ func (game *Game) Reset() {
 func (game *Game) print() {
 
 	defer termbox.Flush()
+
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
 	w, h := termbox.Size()
@@ -85,8 +98,7 @@ func (game *Game) ShowMessage(format string, a ...interface{}) {
 }
 
 func (game *Game) WantsDisplay() {
-
-	// IMPLEMENT SOMETHING HEEEEEERE!
+	termbox.Interrupt()
 }
 
 func NewGame() *Game {
@@ -98,11 +110,7 @@ func NewGame() *Game {
 	return &game
 }
 
-func (game *Game) handleInput() {
-
-	evt := termbox.PollEvent()
-
-	// mutex.Lock()
+func (game *Game) handleEvent(evt termbox.Event) {
 
 	switch evt.Type {
 	case termbox.EventKey:
@@ -129,6 +137,4 @@ func (game *Game) handleInput() {
 			game.Play()
 		}
 	}
-
-	// mutex.Unlock()
 }

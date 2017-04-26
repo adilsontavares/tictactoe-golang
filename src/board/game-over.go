@@ -1,9 +1,5 @@
 package board
 
-// import (
-
-// )
-
 func (board *Board) findWinnerOnHorizontal(line int) int {
 
 	for i := 1; i < 3; i++ {
@@ -87,6 +83,19 @@ func (board *Board) FindWinner() int {
 	return -1
 }
 
+func (board *Board) IsFull() bool {
+	
+	for i := 0; i < 3; i++ {
+		for j := 0; j < 3; j++ {
+			if board.items[i][j] == ItemNone {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
 func (board *Board) IsGameOver() bool {
-	return board.FindWinner() != -1
+	return board.FindWinner() != -1 || board.IsFull()
 }
