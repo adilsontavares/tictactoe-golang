@@ -9,6 +9,12 @@ import (
 	"fmt"
 )
 
+const (
+	StateIdle 			= 0
+	StateWaitingPlay 	= 1
+	StateFinished	 	= 2
+)
+
 type Game struct {
 
 	Board *board.Board
@@ -18,7 +24,10 @@ type Game struct {
 	ComputerScore int
 	PlayerScore int
 
+	alert string
 	message string
+	state int
+
 	WantsFinish bool
 
 	PlayerItem int
@@ -82,7 +91,7 @@ func (game *Game) print() {
 	game.drawHUD()
 
 	var cursor *cursor.Cursor
-	if game.Cursor.Enabled {
+	if game.state == StateWaitingPlay {
 		cursor = game.Cursor
 	} else {
 		cursor = nil
@@ -91,10 +100,24 @@ func (game *Game) print() {
 	game.Board.Print(centerX, centerY, cursor)
 }
 
+func (game *Game) ClearMessage() {
+	game.ShowMessage("")
+}
+
 func (game *Game) ShowMessage(format string, a ...interface{}) {
 
 	message := fmt.Sprintf(format, a...)
 	game.message = message
+
+	game.alert = ""
+}
+
+func (game *Game) ShowAlert(format string, a ...interface{}) {
+
+	alert := fmt.Sprintf(format, a...)
+	game.alert = alert
+
+	game.message = ""
 }
 
 func (game *Game) WantsDisplay() {
@@ -104,6 +127,7 @@ func (game *Game) WantsDisplay() {
 func NewGame() *Game {
 	
 	game := Game{}
+	game.state = StateIdle
 	game.Board = board.New()
 	game.Cursor = cursor.New()
 
@@ -134,7 +158,11 @@ func (game *Game) handleEvent(evt termbox.Event) {
 			game.RequestNewGame()
 
 		case termbox.KeyEnter:
-			game.Play()
+			if game.state == StateWaitingPlay {
+				game.Play()
+			} else if game.state == StateFinished {
+				game.RequestNewGame()
+			}
 		}
 	}
 }

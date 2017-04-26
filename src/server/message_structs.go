@@ -4,6 +4,8 @@ type msgGameOver struct {
 
 	Id int `json:"id"`
 	Winner int `json:"winner"`
+	PlayerScore int `json:"pscore"`
+	ComputerScore int `json:"cscore"`
 }
 
 type msgPlacePlayer struct {

@@ -20,7 +20,7 @@ func main() {
 
 	console.Begin()
 
-	if !client.InitLog("/Users/adilsontavares/Desktop/client_log.txt") {
+	if !client.InitLog("../logs/client-log.txt") {
 		fatal("Could not initialize log.")
 	}
 

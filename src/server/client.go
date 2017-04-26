@@ -9,12 +9,14 @@ import (
 type Client struct {
 
 	waitingPlay bool
-	currentItem int
 
 	Item int
 
 	Socket *sockets.Socket
 	Board *board.Board
+
+	PlayerScore int
+	ComputerScore int
 }
 
 func (client *Client) log(message string, format ...interface{}) {

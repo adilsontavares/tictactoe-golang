@@ -16,7 +16,8 @@ func (game *Game) Play() {
 
 	log.Printf("Play %v at (%v, %v).\n", string(board.CharacterForItem(game.PlayerItem)), lin, col)
 
-	game.Cursor.Enabled = false
+	game.ShowMessage("Waiting computer to play...")
+	game.state = StateIdle
 
 	game.Socket.SendMessage(msgPlay {
 		Id: 101,

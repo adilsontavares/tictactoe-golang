@@ -5,6 +5,7 @@ import (
 	"../console"
 	"../cursor"
 	"log"
+	"math/rand"
 )
 
 var (
@@ -58,17 +59,21 @@ func (board *Board) GetItems() [3][3]int {
 	return board.items
 }
 
-func (board *Board) GetFreePos() (lin int, col int) {
+func (board *Board) GetRandomFreePos() (lin int, col int) {
 
-	for i := 0; i < 3; i++ {
-		for j := 0; j < 3; j++ {
-			if !board.HasItemAt(i, j) {
-				return i, j
-			}
-		}
+	if board.IsFull() {
+		return -1, -1
 	}
 
-	return -1, -1
+	for {
+
+		i := rand.Intn(3)
+		j := rand.Intn(3)
+
+		if board.items[i][j] == ItemNone {
+			return i, j
+		}
+	}
 }
 
 func OppositeItem(item int) int {

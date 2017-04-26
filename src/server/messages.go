@@ -2,20 +2,27 @@ package server
 
 import (
 	"../board"
+	"time"
 )
 
 func (client *Client) interpretMessage(id int, data map[string]interface{}) bool {
 
 	switch id {
-	case 101:	return client.wantsToPlay(data)
+	case 101:	return client.play(data)
 	case 102:	return client.startNewGame()
 	}
 
 	return false
 }
 
-func (client *Client) wantsToPlay(data map[string]interface{}) bool {
+func (client *Client) play(data map[string]interface{}) bool {
 	
+	if !client.waitingPlay {
+		return true
+	}
+
+	client.waitingPlay = false
+
 	line := data["lin"]
 	column := data["col"]
 
@@ -55,7 +62,7 @@ func (client *Client) wantsToPlay(data map[string]interface{}) bool {
 
 func (client *Client) computerPlays() bool {
 
-	lin, col := client.Board.GetFreePos()
+	lin, col := client.Board.GetRandomFreePos()
 	
 	if lin == -1 || col == -1 {
 		return true
@@ -63,6 +70,8 @@ func (client *Client) computerPlays() bool {
 
 	player := board.OppositeItem(client.Item)
 	client.Board.Place(player, lin, col)
+
+	time.Sleep(1 * time.Second)
 
 	client.log("Computer placed %v at (%v, %v).", string(board.CharacterForItem(player)), lin, col)
 
@@ -78,16 +87,23 @@ func (client *Client) invalidPosition(line int, column int) bool {
 
 	client.log("Invalid position for %v at (%v, %v).", string(board.CharacterForItem(client.Item)), line, column)
 
-	return client.sendMessage(msgInvalidPosition {
+	success := client.sendMessage(msgInvalidPosition {
 		Id: 6,
 		Line: line,
 		Column: column,
 	})
+
+	if !client.Board.IsGameOver() {
+		return success && client.requestPlay()
+	}
+
+	return success
 }
 
 func (client *Client) requestPlay() bool {
 
 	client.log("Requesting play.")
+	client.waitingPlay = true
 
 	return client.sendMessage(msgRequestPlay {
 		Id: 3,
@@ -104,8 +120,10 @@ func (client *Client) validatesGameOver() bool {
 
 	if winner == client.Item {
 		client.log("Game Over! Player won.")
+		client.PlayerScore += 1
 	} else if winner == board.OppositeItem(client.Item) {
 		client.log("Game Over! Player lose.")
+		client.ComputerScore += 1
 	} else {
 		client.log("Game Over! It's a tie.")
 	}
@@ -113,6 +131,8 @@ func (client *Client) validatesGameOver() bool {
 	return client.sendMessage(msgGameOver {
 		Id: 2,
 		Winner: winner,
+		PlayerScore: client.PlayerScore,
+		ComputerScore: client.ComputerScore,
 	})
 }
 

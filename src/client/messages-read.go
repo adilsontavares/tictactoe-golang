@@ -23,12 +23,17 @@ func (game *Game) interpretMessage(id int, data map[string]interface{}) bool {
 func (game *Game) gameFinished(data map[string]interface{}) bool {
 
 	winner := data["winner"]
-	if winner == nil {
+	computerScore := data["cscore"]
+	playerScore := data["pscore"]
+
+	if winner == nil || computerScore == nil || playerScore == nil {
 		return false
 	}
 
 	var message string
 	win := int(winner.(float64))
+	cscore := int(computerScore.(float64))
+	pscore := int(playerScore.(float64))
 
 	if win == game.PlayerItem {
 		message = "Game over. You won!"
@@ -38,21 +43,26 @@ func (game *Game) gameFinished(data map[string]interface{}) bool {
 		message = "Game over! That's a tie."
 	}
 
-	game.ShowMessage(message)
+	game.PlayerScore = pscore
+	game.ComputerScore = cscore
+
+	game.ShowAlert(message)
 	log.Printf("%v\n", message)
 
+	game.state = StateFinished
 	game.WantsDisplay()
 
 	return true
 }
 
 func (game *Game) requestPlay() bool {
-	
-	game.Cursor.Enabled = true
 
 	log.Printf("Player, it is your turn!\n")
 	
-	game.ShowMessage("Your turn! Place the %v.", string(board.CharacterForItem(game.PlayerItem)))
+	game.state = StateWaitingPlay
+
+	// game.ShowMessage("Your turn! Place the %v.", string(board.CharacterForItem(game.PlayerItem)))
+	game.ClearMessage()
 	game.WantsDisplay()
 
 	return true
@@ -87,6 +97,8 @@ func (game *Game) startNewGame(data map[string]interface{}) bool {
 	if player == nil {
 		return false
 	}
+
+	game.state = StateIdle
 
 	game.Reset()
 	game.PlayerItem = int(player.(float64))
