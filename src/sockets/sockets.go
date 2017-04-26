@@ -2,10 +2,10 @@ package sockets
 
 import (
 	"net"
+	"fmt"
 	"bufio"
 	"strings"
 	"encoding/json"
-	"log"
 )
 
 var (
@@ -33,16 +33,13 @@ func (socket *Socket) IsClosed() bool {
 
 func (socket *Socket) Log(message string, format ...interface{}) {
 
-	// if !PrintsLog {
-	// 	return
-	// }
+	if !PrintsLog {
+		return
+	}
 
-	log.Printf(message, format...)
-	log.Println()
-
-	// fmt.Printf("- %v %v: ", socket.ActorName, socket.Conn.RemoteAddr())
-	// fmt.Printf(message, format...)
-	// fmt.Println()
+	fmt.Printf("- %v %v: ", socket.ActorName, socket.Conn.RemoteAddr())
+	fmt.Printf(message, format...)
+	fmt.Println()
 }
 
 func (socket *Socket) ReadMessage() {
@@ -64,8 +61,6 @@ func (socket *Socket) ReadMessage() {
 	}
 
 	message := strings.Trim(string(bytes), "\n\r\t ")
-	log.Printf("Received JSON: %v.\n", message)
-
 	socket.ParseJSON(message)
 }
 

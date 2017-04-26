@@ -42,7 +42,5 @@ func NewClient(conn net.Conn) (*Client) {
 	client.Socket.ActorName = "Client"
 	client.Socket.InterpretClosure = client.interpretMessage
 
-	client.startNewGame()
-
 	return &client
 }

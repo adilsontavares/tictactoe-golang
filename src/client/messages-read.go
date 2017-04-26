@@ -7,8 +7,6 @@ import (
 
 func (game *Game) interpretMessage(id int, data map[string]interface{}) bool {
 
-	log.Printf("##### Received message with ID %v", id)
-
 	switch id {
 	case 2:	return game.gameFinished(data)
 	case 3: return game.requestPlay()
@@ -99,6 +97,8 @@ func (game *Game) startNewGame(data map[string]interface{}) bool {
 	}
 
 	game.state = StateIdle
+
+	log.Printf("Start a new game.")
 
 	game.Reset()
 	game.PlayerItem = int(player.(float64))

@@ -59,21 +59,19 @@ func handleClient(conn net.Conn) {
 	client := NewClient(conn)
 	clients = append(clients, client)
 
-	fmt.Printf("# Client conn.: %v (%v connected)\n", conn.RemoteAddr(), len(clients))
+	client.log("CONNECTED (%v total connected).", len(clients))
+	client.startNewGame()
 
-	go func() {
+	for !client.Socket.IsClosed() {
+		client.Socket.ReadMessage()
+	}
 
-		for !client.Socket.IsClosed() {
-			client.Socket.ReadMessage()
+	for i, c := range clients {
+		if c == client {
+			clients = append(clients[:i], clients[i+1:]...)
+			break
 		}
+	}
 
-		for i, c := range clients {
-			if c == client {
-				clients = append(clients[:i], clients[i+1:]...)
-				break
-			}
-		}
-
-		fmt.Printf("# Client disc.: %v (%v connected)\n", conn.RemoteAddr(), len(clients))
-	}()
+	client.log("DISCONNECTED (%v total connected).", len(clients))
 }
