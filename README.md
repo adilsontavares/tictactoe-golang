@@ -1,5 +1,5 @@
 # Tic Tac Toe
-That's a Tic Tac Toe network-based game, developed in GoLang. User can play against computer along the internet. 
+That's a Tic Tac Toe network-based game, developed in GoLang. User can play against computer over the internet. 
 
 ## Screenshots
 
