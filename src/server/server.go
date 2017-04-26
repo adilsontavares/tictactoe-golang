@@ -19,8 +19,6 @@ func Init(laddr string) bool {
 
 	var err error
 	if ln, err = net.Listen("tcp", laddr); err != nil {
-		
-		fmt.Println("Listen error.")
 		return false
 	}
 

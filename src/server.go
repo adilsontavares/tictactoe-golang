@@ -4,7 +4,15 @@ import (
 	"./server"
 	"./sockets"
 	"fmt"
+	"os"
 )
+
+func fatal(format string, a...interface{}) {
+
+	fmt.Printf(format, a...)
+	fmt.Println()
+	os.Exit(1)
+}
 
 func main() {
 
@@ -13,7 +21,16 @@ func main() {
 
 	sockets.PrintsLog = true
 
-	server.Init(":8080")
+	if len(os.Args) != 2 {
+		fatal("USAGE: <PORT>")
+	}
+
+	port := os.Args[1]
+	
+	if !server.Init(":" + port) {
+		fatal("Could not start server.")
+	}
+
 	fmt.Println("Server is running.")
 
 	server.Run()

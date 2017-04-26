@@ -24,8 +24,15 @@ func main() {
 		fatal("Could not initialize log.")
 	}
 
-	if !client.Init("127.0.0.1:8080") {
-		fatal("Could not start client.")
+	if len(os.Args) != 3 {
+		fatal("USAGE: <IP_ADDR> <PORT>")
+	}
+
+	addr := os.Args[1]
+	port := os.Args[2]
+
+	if !client.Init(addr + ":" + port) {
+		fatal("Could not connect to server.")
 	}
 
 	defer console.End()
