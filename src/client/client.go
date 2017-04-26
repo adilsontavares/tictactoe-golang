@@ -1,8 +1,10 @@
 package client
 
 import (
-	"github.com/nsf/termbox-go"
 	"../sockets"
+	"../console"
+	"fmt"
+	"os"
 	"net"
 )
 
@@ -36,8 +38,11 @@ func listen() {
 
 	for !game.Socket.IsClosed() {
 		game.Socket.ReadMessage()
-		termbox.Flush()
 	}
+
+	console.End()
+	fmt.Println("Connection with server was closed.")
+	os.Exit(1)
 }
 
 func Run() {
