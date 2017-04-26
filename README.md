@@ -10,12 +10,7 @@ That's a Tic Tac Toe network-based game, developed in GoLang. User can play agai
 
 ![Demo][demo-img]
 
-| Client                | Server                |
-|-----------------------|-----------------------|
-| ![Client][client-img] | ![Server][server-img] |
-| User paying against computer over the internet. | Server managing many client connections. |
-
+At left is a client. At right, the server. The image shows them connected locally. However, the server supports many client connections and can be hosted on any other machine.
 
 ## Development
 Both, server and client, were coded in Go.
-
