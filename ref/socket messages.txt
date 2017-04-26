@@ -1,0 +1,51 @@
+/* ############################## */
+/* ###### SERVER TO CLIENT ###### */
+/* ############################## */
+
+// GAME FINISHED
+{
+	"id": 2,
+	"winner": 1
+}
+
+// REQUEST PLAY
+{
+	"id": 3
+}
+
+// PLACE PlAYER
+{
+	"id": 4,
+	"player": 1,
+	"lin": 0,
+	"col": 0
+}
+
+// START NEW GAME
+{
+	"id": 5,
+	"player": 1 /* Determines which is the player symbol (X or O) */
+}
+
+// INVALID POSITION
+{
+	"id": 6,
+	"lin": 0,
+	"col": 0
+}
+
+/* ############################## */
+/* ###### CLIENT TO SERVER ###### */
+/* ############################## */
+
+// PLAY
+{
+	"id": 101,
+	"lin": 0,
+	"col": 0
+}
+
+// REQUEST NEW GAME
+{
+	"id": 102
+}
